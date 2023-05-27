@@ -239,7 +239,7 @@ print(f"The implied volatility for the Put option is: {standard_deviation2 * 100
 
 # Variables a asignar
 style = "European"
-direction = "Buy"
+direction = "Sell"
 call_put = "Put"
 
 def calculate_d1_d2_2(T, spot2, strike1, risk_free, dividend, standard_deviation2):
@@ -254,15 +254,15 @@ def delta2():
     Nd1 = stats.norm.cdf(d1)
 
     if call_put == "Call":
-        return math.exp(-dividend * T) * Nd1
+        return math.exp(-dividend * T) * Nd1 * volumen
     else:
-        return math.exp(-dividend * T) * (Nd1 - 1)
+        return math.exp(-dividend * T) * (Nd1 - 1) * volumen
 
 def gamma2():
     T = time1
     d1, _ = calculate_d1_d2_2(T, spot2, strike1, risk_free, dividend, standard_deviation2)
 
-    return (math.exp(-dividend * T) / (spot2 * standard_deviation2 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
+    return (math.exp(-dividend * T) * volumen / (spot2 * standard_deviation2 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
 
 def theta2():
     T = time1
@@ -271,18 +271,18 @@ def theta2():
     Nd2 = stats.norm.cdf(d2)
 
     if call_put == "Call":
-        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike1 * math.exp(-risk_free * T) * Nd2 + dividend * spot2 * math.exp(-dividend * T) * Nd1)
+        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike1 * math.exp(-risk_free * T) * Nd2 + dividend * spot2 * math.exp(-dividend * T) * Nd1)
     else:
         Nmind1 = stats.norm.cdf(-d1)
         Nmind2 = stats.norm.cdf(-d2)
 
-        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) + risk_free * strike1 * math.exp(-risk_free * T) * Nmind2 - dividend * spot2 * math.exp(-dividend * T) * Nmind1)
+        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) + risk_free * strike1 * math.exp(-risk_free * T) * Nmind2 - dividend * spot2 * math.exp(-dividend * T) * Nmind1)
 
 def vega2():
     T = time1
     d1, _ = calculate_d1_d2_2(T, spot2, strike1, risk_free, dividend, standard_deviation2)
 
-    return 1 / 100 * spot2 * math.exp(-dividend * T) * math.sqrt(T) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)
+    return 1 / 100 * spot2 * math.exp(-dividend * T) * volumen * math.sqrt(T) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)
 
 def rho2():
     T = time1
@@ -294,7 +294,7 @@ def rho2():
     else:
         Nmind2 = stats.norm.cdf(-d2)
 
-        return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2
+        return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
 
 print(delta2())
 print(gamma2())
