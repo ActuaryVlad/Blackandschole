@@ -26,9 +26,9 @@ fecha_exp = date(2023 , 3, 11)
 #precio del activo subyacente
 spot3 = 3907.25
 # Precio Strike 
-strike3 = 3830
+strike3 = 3995
 #precio de la opcion
-target3 = 1.55
+target3 = 0.6
 
 #caso 4
 #precio del activo subyacente
@@ -82,7 +82,7 @@ volumen = 1
 option_type = "p"
 
 
-time = (maturity - timestamp) / (365 * 24 * 60 * 60)
+time = time2 =  (maturity - timestamp) / (365 * 24 * 60 * 60)
 
 # calcular el iv
 def d_one(volatility):
@@ -193,7 +193,7 @@ print(rho())
 #Sell/Buy
 sell_buy = "STO"
 #Volumen 1 o -1
-volumen = -1
+volumen2 = -1
 #Type p o c
 option_type = "p"
 
@@ -254,7 +254,7 @@ def delta2():
     Nd1 = stats.norm.cdf(d1)
 
     if call_put == "Call":
-        return math.exp(-dividend * T) * Nd1 * volumen
+        return math.exp(-dividend * T) * Nd1 * volumen2
     else:
         return math.exp(-dividend * T) * (Nd1 - 1) * volumen
 
@@ -262,7 +262,7 @@ def gamma2():
     T = time1
     d1, _ = calculate_d1_d2_2(T, spot2, strike1, risk_free, dividend, standard_deviation2)
 
-    return (math.exp(-dividend * T) * volumen / (spot2 * standard_deviation2 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
+    return (math.exp(-dividend * T) * volumen2 / (spot2 * standard_deviation2 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
 
 def theta2():
     T = time1
@@ -271,7 +271,7 @@ def theta2():
     Nd2 = stats.norm.cdf(d2)
 
     if call_put == "Call":
-        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike1 * math.exp(-risk_free * T) * Nd2 + dividend * spot2 * math.exp(-dividend * T) * Nd1)
+        return 1 / 365 * (-(spot2 * standard_deviation2 * math.exp(-dividend * T) * volumen2 / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike1 * math.exp(-risk_free * T) * Nd2 + dividend * spot2 * math.exp(-dividend * T) * Nd1)
     else:
         Nmind1 = stats.norm.cdf(-d1)
         Nmind2 = stats.norm.cdf(-d2)
@@ -294,10 +294,122 @@ def rho2():
     else:
         Nmind2 = stats.norm.cdf(-d2)
 
-        return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
+        return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen2
 
 print(delta2())
 print(gamma2())
 print(theta2())
 print(vega2())
 print(rho2())
+
+#caso 3
+
+#Sell/Buy
+sell_buy = "BTO"
+#Volumen 1 o -1
+volumen3 = 1
+#Type p o c
+option_type = "c"
+
+def d_one_new3(volatility3):
+    return (math.log(spot3 / strike3) + (risk_free - dividend + 0.5 * volatility3 ** 2) * time2) / (volatility3 * math.sqrt(time2))
+
+def nd_one_new3(volatility3):
+    return math.exp(-(d_one_new3(volatility3) ** 2) / 2) / (math.sqrt(2 * math.pi))
+
+def d_two_new3(volatility3):
+    return d_one_new3(volatility3) - volatility3 * math.sqrt(time2)
+
+def nd_two_new3(volatility3):
+    return stats.norm.cdf(d_two_new3(volatility3))
+
+def call_option_new3(volatility3):
+    return math.exp(-dividend * time2) * spot3 * stats.norm.cdf(d_one_new3(volatility3)) - strike3 * math.exp(-risk_free * time2) * stats.norm.cdf(d_two_new3(volatility3))
+
+def put_option_new3(volatility3):
+    return strike3 * math.exp(-risk_free * time2) * stats.norm.cdf(-d_two_new3(volatility3)) - math.exp(-dividend * time2) * spot3 * stats.norm.cdf(-d_one_new3(volatility3))
+
+def implied_call_volatility_new3():
+    high = 5.0
+    low = 0.0
+    mid = (high + low) / 2.0
+
+    while (high - low) > 0.000001:
+        if call_option_new3(mid) > target3:  
+            high = mid
+        else:
+            low = mid
+        mid = (high + low) / 2.0
+
+    return mid
+
+standard_deviation3 = implied_call_volatility_new3()
+print(f"The implied volatility for the Call option is: {standard_deviation3 * 100}%")
+
+#Calculo de las griegas
+
+# Variables a asignar
+style = "European"
+direction = "Buy"
+call_put = "Call"
+
+def calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3):
+    dt = standard_deviation3 * math.sqrt(T)
+    d1 = (math.log(spot3 / strike3) + (risk_free - dividend + (standard_deviation3 ** 2 / 2)) * T) / dt
+    d2 = d1 - dt
+    return d1, d2
+
+def delta3():
+    T = time
+    d1, d2 = calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3)
+    Nd1 = stats.norm.cdf(d1)
+
+    if call_put == "Call":
+        return math.exp(-dividend * T) * Nd1 * volumen
+    else:
+        return math.exp(-dividend * T) * (Nd1 - 1) * volumen
+    
+
+def gamma3():
+    T = time
+    d1, _ = calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3)
+
+    return (math.exp(-dividend * T) * volumen / (spot2 * standard_deviation3 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
+
+def theta3():
+    T = time
+    d1, d2 = calculate_d1_d2_3(T, spot2, strike1, risk_free, dividend, standard_deviation2)
+    Nd1 = stats.norm.cdf(d1)
+    Nd2 = stats.norm.cdf(d2)
+
+    if call_put == "Call":
+        return 1 / 365 * (-(spot3 * standard_deviation3 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike3 * math.exp(-risk_free * T) * Nd2 + dividend * spot3 * math.exp(-dividend * T) * Nd1)
+    else:
+        Nmind1 = stats.norm.cdf(-d1)
+        Nmind2 = stats.norm.cdf(-d2)
+
+        return 1 / 365 * (-(spot3 * standard_deviation3 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) + risk_free * strike3 * math.exp(-risk_free * T) * Nmind2 - dividend * spot3 * math.exp(-dividend * T) * Nmind1)
+
+def vega3():
+    T = time
+    d1, _ = calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3)
+
+    return 1 / 100 * spot3 * math.exp(-dividend * T) * volumen * math.sqrt(T) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)
+
+def rho3():
+    T = time1
+    _, d2 = calculate_d1_d2_2(T, spot3, strike3, risk_free, dividend, standard_deviation3)
+    Nd2 = stats.norm.cdf(d2)
+
+    if call_put == "Call":
+        return (1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nd2
+    else:
+        Nmind2 = stats.norm.cdf(-d2)
+
+        return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
+
+print(delta3())
+print(gamma3())
+print(theta3())
+print(vega3())
+print(rho3())
