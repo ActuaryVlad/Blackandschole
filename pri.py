@@ -378,7 +378,7 @@ def gamma3():
 
 def theta3():
     T = time
-    d1, d2 = calculate_d1_d2_3(T, spot2, strike1, risk_free, dividend, standard_deviation2)
+    d1, d2 = calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3)
     Nd1 = stats.norm.cdf(d1)
     Nd2 = stats.norm.cdf(d2)
 
