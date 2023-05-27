@@ -12,19 +12,41 @@ strike = 3830
 #precio de la opcion
 target = 1.55
 
+#2
+#precio del activo subyacente
+spot2 = 3907.25
+# Precio Strike 
+strike2 = 3830
+#precio de la opcion
+target2 = 1.55
+
+#3
+#precio del activo subyacente
+spot3 = 3907.25
+# Precio Strike 
+strike3 = 3830
+#precio de la opcion
+target3 = 1.55
+
+#4
+#precio del activo subyacente
+spot4 = 3907.25
+# Precio Strike 
+strike4 = 3830
+#precio de la opcion
+target4 = 1.55
+
+
 # Dividendo
 dividend = 0.0000001  # Dividendo
 #tasa de interes libre de riesgo
 risk_free = 0.0027
 # Crear variable con la fecha de hoy
 hoy = date.today()
-
 # Crear variable con una hora específica (por ejemplo, las 15:30)
 hora_exacta = time(10, 30)
-
 # Combinar la fecha y la hora en un objeto datetime
 fecha_y_hora = datetime.combine(hoy, hora_exacta)
-
 # Convertir el objeto datetime a un timestamp
 timestamp = datetime.timestamp(fecha_y_hora)
 
