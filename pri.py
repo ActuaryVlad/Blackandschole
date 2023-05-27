@@ -6,7 +6,7 @@ import py_vollib.black_scholes.implied_volatility as iv
 #Colocar variables para los casos
 #1
 #precio del activo subyacente
-spot = 3907.25
+spot = 3907.256
 # Precio Strike 
 strike = 3830
 #precio de la opcion
