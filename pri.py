@@ -62,8 +62,7 @@ maturity = datetime.timestamp(fecha_y_hora1)
 
 #CASO 1
 
-#precio del activo subyacente
-spot = 3907.25
+
 #Sell/Buy
 sell_buy = "BTO"
 #Volumen 1 o -1
@@ -177,3 +176,51 @@ print(gamma())
 print(theta())
 print(vega())
 print(rho())
+
+#Caso 2
+
+#Sell/Buy
+sell_buy = "STO"
+#Volumen 1 o -1
+volumen = -1
+#Type p o c
+option_type = "p"
+
+
+
+# calcular el iv2
+def d_one(volatility):
+    return (math.log(spot / strike) + (risk_free - dividend + 0.5 * volatility ** 2) * time) / (volatility * math.sqrt(time))
+
+def nd_one(volatility):
+    return math.exp(-(d_one(volatility) ** 2) / 2) / (math.sqrt(2 * math.pi))
+
+def d_two(volatility):
+    return d_one(volatility) - volatility * math.sqrt(time)
+
+def nd_two(volatility):
+    return stats.norm.cdf(d_two(volatility))
+
+def call_option(volatility):
+    return math.exp(-dividend * time) * spot * stats.norm.cdf(d_one(volatility)) - strike * math.exp(-risk_free * time) * stats.norm.cdf(d_two(volatility))
+
+def put_option(volatility):
+    return strike * math.exp(-risk_free * time) * stats.norm.cdf(-d_two(volatility)) - math.exp(-dividend * time) * spot * stats.norm.cdf(-d_one(volatility))
+
+def implied_put_volatility():
+    high = 5.0
+    low = 0.0
+    mid = (high + low) / 2.0
+
+    while (high - low) > 0.000001:
+        if put_option(mid) > target:
+            high = mid
+        else:
+            low = mid
+        mid = (high + low) / 2.0
+
+    return mid
+
+# Calculation
+standard_deviation = implied_put_volatility()
+print(f"The implied volatility for the Put option is: {standard_deviation * 100}%")
