@@ -34,9 +34,9 @@ target3 = 0.6
 #precio del activo subyacente
 spot4 = 3907.25
 # Precio Strike 
-strike4 = 3830
+strike4 = 4015
 #precio de la opcion
-target4 = 1.55
+target4 = 1.15
 
 
 # Dividendo
@@ -397,7 +397,7 @@ def vega3():
     return 1 / 100 * spot3 * math.exp(-dividend * T) * volumen * math.sqrt(T) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)
 
 def rho3():
-    T = time1
+    T = time
     _, d2 = calculate_d1_d2_2(T, spot3, strike3, risk_free, dividend, standard_deviation3)
     Nd2 = stats.norm.cdf(d2)
 
@@ -413,3 +413,115 @@ print(gamma3())
 print(theta3())
 print(vega3())
 print(rho3())
+
+#caso 4
+
+# Sell/Buy
+sell_buy = "STO"
+# Volumen 1 o -1
+volumen4 = -1
+# Type p o c
+option_type = "c"
+
+def d_one_new4(volatility4):
+    return (math.log(spot4 / strike4) + (risk_free - dividend + 0.5 * volatility4 ** 2) * time2) / (volatility4 * math.sqrt(time1))
+
+def nd_one_new4(volatility4):
+    return math.exp(-(d_one_new4(volatility4) ** 2) / 2) / (math.sqrt(2 * math.pi))
+
+def d_two_new4(volatility4):
+    return d_one_new4(volatility4) - volatility4 * math.sqrt(time1)
+
+def nd_two_new4(volatility4):
+    return stats.norm.cdf(d_two_new4(volatility4))
+
+def call_option_new4(volatility4):
+    return math.exp(-dividend * time1) * spot4 * stats.norm.cdf(d_one_new4(volatility4)) - strike4 * math.exp(-risk_free * time1) * stats.norm.cdf(d_two_new4(volatility4))
+
+def put_option_new4(volatility4):
+    return strike4 * math.exp(-risk_free * time1) * stats.norm.cdf(-d_two_new4(volatility4)) - math.exp(-dividend * time1) * spot4 * stats.norm.cdf(-d_one_new4(volatility4))
+
+def implied_call_volatility_new4():
+    high = 5.0
+    low = 0.0
+    mid = (high + low) / 2.0
+
+    while (high - low) > 0.000001:
+        if call_option_new4(mid) > target4:  
+            high = mid
+        else:
+            low = mid
+        mid = (high + low) / 2.0
+
+    return mid
+
+standard_deviation4 = implied_call_volatility_new4()
+print(f"The implied volatility for the Call option is: {standard_deviation4 * 100}%")
+
+# Calculo de las griegas
+
+# Variables a asignar
+style = "European"
+direction = "Buy"
+call_put = "Call"
+
+def calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4):
+    dt = standard_deviation4 * math.sqrt(T)
+    d1 = (math.log(spot4 / strike4) + (risk_free - dividend + (standard_deviation4 ** 2 / 2)) * T) / dt
+    d2 = d1 - dt
+    return d1, d2
+
+def delta4():
+    T = time1
+    d1, d2 = calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4)
+    Nd1 = stats.norm.cdf(d1)
+
+    if call_put == "Call":
+        return math.exp(-dividend * T) * Nd1 * volumen4
+    else:
+        return math.exp(-dividend * T) * (Nd1 - 1) * volumen4
+    
+
+def gamma4():
+    T = time1
+    d1, _ = calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4)
+
+    return (math.exp(-dividend * T) * volumen4 / (spot4 * standard_deviation4 * math.sqrt(T))) * (1 / math.sqrt(2 * math.pi)) * math.exp(-(d1 ** 2) / 2)
+
+def theta4():
+    T = time1
+    d1, d2 = calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4)
+    Nd1 = stats.norm.cdf(d1)
+    Nd2 = stats.norm.cdf(d2)
+
+    if call_put == "Call":
+        return 1 / 365 * (-(spot4 * standard_deviation4 * math.exp(-dividend * T) * volumen4 / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike4 * math.exp(-risk_free * T) * Nd2 + dividend * spot4 * math.exp(-dividend * T) * Nd1)
+    else:
+        Nmind1 = stats.norm.cdf(-d1)
+        Nmind2 = stats.norm.cdf(-d2)
+
+        return 1 / 365 * (-(spot4 * standard_deviation4 * math.exp(-dividend * T) * volumen4 / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) + risk_free * strike4 * math.exp(-risk_free * T) * Nmind2 - dividend * spot4 * math.exp(-dividend * T) * Nmind1)
+
+def vega4():
+    T = time1
+    d1, _ = calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4)
+
+    return 1 / 100 * spot4 * math.exp(-dividend * T) * volumen4 * math.sqrt(T) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)
+
+def rho4():
+    T = time1
+    _, d2 = calculate_d1_d2_2(T, spot4, strike4, risk_free, dividend, standard_deviation4)
+    Nd2 = stats.norm.cdf(d2)
+
+    if call_put == "Call":
+        return (1 / 100) * (strike4 * T * math.exp(-risk_free * T)) * Nd2
+    else:
+        Nmind2 = stats.norm.cdf(-d2)
+
+        return -(1 / 100) * (strike4 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
+
+print(delta4())
+print(gamma4())
+print(theta4())
+print(vega4())
+print(rho4())
