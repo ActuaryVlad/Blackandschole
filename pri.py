@@ -2,6 +2,7 @@ from datetime import datetime, date, time
 import math
 import scipy.stats as stats
 import py_vollib.black_scholes.implied_volatility as iv
+from scipy.stats import norm
 
 #Colocar variables para los casos
 #1
@@ -191,7 +192,7 @@ print(rho())
 #Caso 2
 
 #Sell/Buy
-sell_buy = "STO"
+sell_buy1 = "STO"
 #Volumen 1 o -1
 volumen2 = -1
 #Type p o c
@@ -224,7 +225,7 @@ def implied_put_volatility_new():
     mid = (high + low) / 2.0
 
     while (high - low) > 0.000001:
-        if put_option_new(mid) > target2:  # Aquí debe ser target2, no target
+        if put_option_new(mid) > target2:  
             high = mid
         else:
             low = mid
@@ -309,7 +310,7 @@ sell_buy = "BTO"
 #Volumen 1 o -1
 volumen3 = 1
 #Type p o c
-option_type = "c"
+option_type3 = "c"
 
 def d_one_new3(volatility3):
     return (math.log(spot3 / strike3) + (risk_free - dividend + 0.5 * volatility3 ** 2) * time2) / (volatility3 * math.sqrt(time2))
@@ -350,8 +351,8 @@ print(f"The implied volatility for the Call option is: {standard_deviation3 * 10
 
 # Variables a asignar
 style = "European"
-direction = "Buy"
-call_put = "Call"
+direction3 = "Buy"
+call_put3 = "Call"
 
 def calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3):
     dt = standard_deviation3 * math.sqrt(T)
@@ -364,7 +365,7 @@ def delta3():
     d1, d2 = calculate_d1_d2_3(T, spot3, strike3, risk_free, dividend, standard_deviation3)
     Nd1 = stats.norm.cdf(d1)
 
-    if call_put == "Call":
+    if call_put3 == "Call":
         return math.exp(-dividend * T) * Nd1 * volumen
     else:
         return math.exp(-dividend * T) * (Nd1 - 1) * volumen
@@ -382,7 +383,7 @@ def theta3():
     Nd1 = stats.norm.cdf(d1)
     Nd2 = stats.norm.cdf(d2)
 
-    if call_put == "Call":
+    if call_put3 == "Call":
         return 1 / 365 * (-(spot3 * standard_deviation3 * math.exp(-dividend * T) * volumen / (2 * math.sqrt(T)) * 1 / math.sqrt(2 * math.pi) * math.exp(-(d1 ** 2) / 2)) - risk_free * strike3 * math.exp(-risk_free * T) * Nd2 + dividend * spot3 * math.exp(-dividend * T) * Nd1)
     else:
         Nmind1 = stats.norm.cdf(-d1)
@@ -401,7 +402,7 @@ def rho3():
     _, d2 = calculate_d1_d2_2(T, spot3, strike3, risk_free, dividend, standard_deviation3)
     Nd2 = stats.norm.cdf(d2)
 
-    if call_put == "Call":
+    if call_put3 == "Call":
         return (1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nd2
     else:
         Nmind2 = stats.norm.cdf(-d2)
@@ -462,8 +463,8 @@ print(f"The implied volatility for the Call option is: {standard_deviation4 * 10
 
 # Variables a asignar
 style = "European"
-direction = "Buy"
-call_put = "Call"
+direction4 = "Buy"
+call_put4 = "Call"
 
 def calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4):
     dt = standard_deviation4 * math.sqrt(T)
@@ -476,7 +477,7 @@ def delta4():
     d1, d2 = calculate_d1_d2_4(T, spot4, strike4, risk_free, dividend, standard_deviation4)
     Nd1 = stats.norm.cdf(d1)
 
-    if call_put == "Call":
+    if call_put4 == "Call":
         return math.exp(-dividend * T) * Nd1 * volumen4
     else:
         return math.exp(-dividend * T) * (Nd1 - 1) * volumen4
@@ -520,8 +521,71 @@ def rho4():
 
         return -(1 / 100) * (strike4 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
 
-print(delta4())
+print(f"delta {delta4()}")
 print(gamma4())
 print(theta4())
 print(vega4())
 print(rho4())
+
+
+
+# p y l
+
+#caso 1
+
+s = (maturity - timestamp) / (365 * 24 * 60 * 60)
+print(f"s {s}") 
+print(f"mat {maturity}")
+Ti = maturity / (365 * 24 * 60 * 60)
+print(f"Ti {Ti}")
+def option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend):
+    T = (maturity - timestamp) / (365 * 24 * 60 * 60)  # Convertimos a años
+    dt = standard_deviation * math.sqrt(T)
+    d1 = (math.log(spot / strike) + (risk_free - dividend + (standard_deviation ** 2 / 2)) * T) / dt
+    d2 = d1 - dt
+
+    Nd1 = norm.cdf(d1)
+    Nd2 = norm.cdf(d2)
+    Nmind2 = norm.cdf(-d2)
+    Nmind1 = norm.cdf(-d1)
+
+    if option_type == "c" and style == "European":
+        return (spot * math.exp(-dividend * T) * Nd1) - (strike * math.exp(-risk_free * T) * Nd2)
+    elif option_type == "p" and style == "European":
+        return (strike * math.exp(-risk_free * T) * Nmind2) - (spot * math.exp(-dividend * T) * Nmind1)
+    else:
+        if option_type == "c":
+            Q = 1
+            RF = risk_free
+            Div2 = dividend
+        else:
+            Q = -1
+            RF = dividend
+            Div2 = RF
+            AssetSpot = spot
+            spot = strike
+            strike = AssetSpot
+
+        Volat = standard_deviation * (T) ** 0.5
+        drift = risk_free - dividend
+        Volat2 = standard_deviation ** 2
+
+def payoff(S, X, Premium, Flag, Qty):
+    if Flag == "C":
+        return max(S - X, 0) * Qty - Premium * Qty
+    else:
+        return max(X - S, 0) * Qty - Premium * Qty
+
+def intrinsic(S1, X1, Flag1):
+    if Flag1 == "C":
+        return max(S1 - X1, 0)
+    else:
+        return max(X1 - S1, 0)
+
+def pnl(S2, X2, Flag2, Mat2, Qty2, Style2, Dir2, Call_Put2, PricingDate2, RiskFree2, IV2, Div2, Multiplier, Premium):
+    if PricingDate2 == Mat2:
+        return intrinsic(S2, X2, Flag2) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
+    else:
+        return abs(option_pricer(Style2, Dir2, Call_Put2, S2, X2, PricingDate2, Mat2, RiskFree2, IV2, Div2)) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
+
+print(option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend))
