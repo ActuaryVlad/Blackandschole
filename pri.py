@@ -18,7 +18,10 @@ spot2 = 3907.25
 # Precio Strike 
 strike2 = 3830
 #precio de la opcion
-target2 = 1.55
+target2 = 3.8
+# Crear una nueva hora específica a las
+hora_especifica = time(16, 00)
+
 
 #3
 #precio del activo subyacente
