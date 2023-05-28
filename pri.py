@@ -4,6 +4,7 @@ import scipy.stats as stats
 import py_vollib.black_scholes.implied_volatility as iv
 from scipy.stats import norm
 
+
 #Colocar variables para los casos
 #1
 #precio del activo subyacente
@@ -538,6 +539,7 @@ print(f"s {s}")
 print(f"mat {maturity}")
 Ti = maturity / (365 * 24 * 60 * 60)
 print(f"Ti {Ti}")
+
 def option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend):
     T = (maturity - timestamp) / (365 * 24 * 60 * 60)  # Convertimos a años
     dt = standard_deviation * math.sqrt(T)
@@ -583,9 +585,128 @@ def intrinsic(S1, X1, Flag1):
         return max(X1 - S1, 0)
 
 def pnl(S2, X2, Flag2, Mat2, Qty2, Style2, Dir2, Call_Put2, PricingDate2, RiskFree2, IV2, Div2, Multiplier, Premium):
+    
+    kk = Qty2
+    print(f"valor {kk}") 
+    
+    
     if PricingDate2 == Mat2:
         return intrinsic(S2, X2, Flag2) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
     else:
         return abs(option_pricer(Style2, Dir2, Call_Put2, S2, X2, PricingDate2, Mat2, RiskFree2, IV2, Div2)) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
 
 print(option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend))
+
+
+#otro codigo
+import math
+import numpy as np
+from scipy.stats import norm
+
+# Payoff
+def payoff(s, x, premium, flag, qty):
+    if flag == "C":
+        return max(s - x, 0) * qty - premium * qty
+    else:
+        return max(x - s, 0) * qty - premium * qty
+
+# Intrinsic
+def intrinsic(s1, x1, flag1):
+    if flag1 == "C":
+        return max(s1 - x1, 0)
+    else:
+        return max(x1 - s1, 0)
+
+# PnL
+
+def pnl(style, direction, call_put, s, x, pricing_date, maturity, risk_free, volatility, dividend, qty, multiplier, premium):
+    if pricing_date == maturity:
+        pnl_value = intrinsic(s, x, call_put) * qty * multiplier - premium * qty * multiplier
+        intr = intrinsic(s, x, call_put)
+        print(f"intrinsic : {intr}")
+        print(f"PnL for {call_put} option at maturity: {pnl_value}")
+        return pnl_value
+    else:
+        option_price = abs(option_pricer(style, direction, call_put, s, x, pricing_date, maturity, risk_free, volatility, dividend))
+        pnl_value2 = option_price * qty * multiplier - premium * qty * multiplier
+        print(f"PnL for {call_put} option: {pnl_value2}")
+        return pnl_value2
+
+
+
+
+# Option_Pricer
+def option_pricer(style, direction, call_put, spot, strike, pricing_date, maturity, risk_free, standard_deviation, dividend):
+    t = (maturity - pricing_date) / 365
+    dt = standard_deviation * math.sqrt(t)
+    d1 = (np.log(spot / strike) + (risk_free - dividend + (standard_deviation ** 2 / 2)) * t) / dt
+    d2 = d1 - dt
+
+    nd1 = norm.cdf(d1)
+    nd2 = norm.cdf(d2)
+    nmind2 = norm.cdf(-d2)
+    nmind1 = norm.cdf(-d1)
+
+    if call_put == "Call" and style == "European":
+        return (spot * math.exp(-dividend * t) * nd1) - (strike * math.exp(-risk_free * t) * nd2)
+    elif call_put == "Put" and style == "European":
+        return (strike * math.exp(-risk_free * t) * nmind2) - (spot * math.exp(-dividend * t) * nmind1)
+    else:
+        if call_put == "Call":
+            q = 1
+            rf = risk_free
+            div2 = dividend
+        else:
+            q = -1
+            rf = dividend
+            div2 = rf
+            asset_spot = spot
+            spot = strike
+            strike = asset_spot
+
+        volat = standard_deviation * (t) ** 0.5
+        drift = risk_free - dividend
+        volat2 = standard_deviation ** 2
+
+        if (q * (risk_free - dividend) >= rf):
+            if call_put == "Call":
+                result = option_pricer("European", "Buy", "Call", spot, strike, pricing_date, maturity, risk_free, standard_deviation, dividend)
+            else:
+                result = option_pricer("European", "Buy", "Call", spot, strike, pricing_date, maturity, risk_free, standard_deviation, div2)
+
+        return result
+import datetime
+
+Style = "European"
+Direction = "Buy"
+Call_Put = "Put"
+Spot = 3805
+Strike = 3830
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.54
+Dividend = 0.000001
+Qty = 1
+Multiplier = 100
+Premium = 1.55
+pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL es:", pnl_result)
+
+#caso 2
+Style = "European"
+Direction = "Sell"
+Call_Put = "Put"
+Spot = 3805
+Strike = 3810
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.3444
+Dividend = 0.000001
+Qty = 1
+Multiplier = 100
+Premium = 3.80
+pnl_result2 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL2 es:", pnl_result2)
+#caso 3
