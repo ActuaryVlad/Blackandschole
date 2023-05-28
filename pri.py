@@ -676,21 +676,20 @@ def option_pricer(style, direction, call_put, spot, strike, pricing_date, maturi
 
         return result
 import datetime
-
+#caso 1
 Style = "European"
 Direction = "Buy"
 Call_Put = "Put"
-Spot = 3805
+Spot = 3730
 Strike = 3830
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity = datetime.datetime(2023, 3, 10)
 RiskFree = 0.0027
 StandardDeviation = 0.54
-Dividend = 0.000001
 Qty = 1
 Multiplier = 100
 Premium = 1.55
-pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
 print("El PnL es:", pnl_result)
 
 #caso 2
@@ -710,3 +709,124 @@ Premium = 3.80
 pnl_result2 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
 print("El PnL2 es:", pnl_result2)
 #caso 3
+
+Style = "European"
+Direction = "Buy"
+Call_Put = "Call"
+Spot = 3907.25
+Strike = 3910
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.4811
+Dividend = 0.000001
+Qty = 1
+Multiplier = 100
+Premium = 0.6
+pnl_result3 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL3 es:", pnl_result3)
+
+#4
+Style = "European"
+Direction = "Buy"
+Call_Put = "Call"
+Spot = 3907.25
+Strike = 3810
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.4811
+Dividend = 0.000001
+Qty = 1
+Multiplier = 100
+Premium = 0.6
+pnl_result4 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL4 es:", pnl_result4)
+
+#prueba
+import datetime
+from datetime import datetime
+
+
+#caso 1
+Style = "European"
+Direction = "Buy"
+Call_Put = "Put"
+Spot = 3910
+Strike = 3830
+PricingDate = datetime(2023, 3, 10)
+Maturity = datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.54
+Dividend = 0.00001
+Qty = 1
+Multiplier = 100
+Premium = 1.55
+
+pnl_results = {} # Ahora es un diccionario
+
+# Calculamos el PnL inicial
+pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL inicial es:", pnl_result)
+pnl_results[0] = pnl_result # Guardamos el resultado inicial
+
+# Sumamos y restamos 15 a Spot 12 veces
+for i in range(1, 13):
+    Spot += 15
+    pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    print(f"El PnL tras sumar 15 a Spot {i} veces es:", pnl_result)
+    pnl_results[i] = pnl_result # Guardamos el resultado
+
+for i in range(1, 13):
+    Spot -= 15
+    pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    print(f"El PnL tras restar 15 a Spot {i} veces es:", pnl_result)
+    pnl_results[-i] = pnl_result # Guardamos el resultado
+
+# Ahora puedes acceder a cualquier resultado utilizando su clave
+print("El PnL tras sumar 15 a Spot 2 veces es:", pnl_results[10])
+print("El PnL tras restar 15 a Spot 2 veces es:", pnl_results[-2])
+
+
+
+#grafico
+
+import datetime
+import matplotlib.pyplot as plt
+
+# Caso 1
+Style = "European"
+Direction = "Buy"
+Call_Put = "Put"
+Spot = 3910
+Strike = 3830
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
+RiskFree = 0.0027
+StandardDeviation = 0.54
+Qty = 1
+Multiplier = 100
+Premium = 1.55
+
+pnl_results = {}
+for i in range(-6, 7): # 13 iteraciones
+    new_spot = Spot + i*5
+    pnl_result = pnl(Style, Direction, Call_Put, new_spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    pnl_results[new_spot] = pnl_result
+
+# Ahora creamos las listas para los ejes X e Y de nuestro gráfico
+x_values = list(pnl_results.keys())
+y_values = list(pnl_results.values())
+
+# Creamos el gráfico
+plt.figure(figsize=(10,6))
+plt.plot(x_values, y_values, marker='o') # Usamos 'o' para marcar cada punto de datos
+
+# Etiquetas para los ejes y el título del gráfico
+plt.xlabel('Valores de Spot')
+plt.ylabel('PnL')
+plt.title('PnL versus cambios en Spot')
+
+# Mostrar el gráfico
+plt.show()
+
