@@ -121,7 +121,7 @@ def implied_put_volatility():
 
 # Calculation
 standard_deviation = implied_put_volatility()
-print(f"The implied volatility for the Put option is: {standard_deviation * 100}%")
+##print(f"The implied volatility for the Put option is: {standard_deviation * 100}%")
 
 #Calculo de las griegas
 
@@ -184,11 +184,11 @@ def rho():
 
         return -(1 / 100) * (strike * T * math.exp(-risk_free * T)) * Nmind2
 
-print(delta())
-print(gamma())
-print(theta())
-print(vega())
-print(rho())
+##print(delta())
+##print(gamma())
+##print(theta())
+##print(vega())
+##print(rho())
 
 #Caso 2
 
@@ -235,7 +235,7 @@ def implied_put_volatility_new():
     return mid
 
 standard_deviation2 = implied_put_volatility_new()
-print(f"The implied volatility for the Put option is: {standard_deviation2 * 100}%")
+##print(f"The implied volatility for the Put option is: {standard_deviation2 * 100}%")
 
 #Calculo de las griegas
 
@@ -298,11 +298,11 @@ def rho2():
 
         return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen2
 
-print(delta2())
-print(gamma2())
-print(theta2())
-print(vega2())
-print(rho2())
+##print(delta2())
+##print(gamma2())
+##print(theta2())
+##print(vega2())
+##print(rho2())
 
 #caso 3
 
@@ -346,7 +346,7 @@ def implied_call_volatility_new3():
     return mid
 
 standard_deviation3 = implied_call_volatility_new3()
-print(f"The implied volatility for the Call option is: {standard_deviation3 * 100}%")
+##print(f"The implied volatility for the Call option is: {standard_deviation3 * 100}%")
 
 #Calculo de las griegas
 
@@ -410,11 +410,11 @@ def rho3():
 
         return -(1 / 100) * (strike1 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
 
-print(delta3())
-print(gamma3())
-print(theta3())
-print(vega3())
-print(rho3())
+##print(delta3())
+##print(gamma3())
+##print(theta3())
+##print(vega3())
+##print(rho3())
 
 #caso 4
 
@@ -458,7 +458,7 @@ def implied_call_volatility_new4():
     return mid
 
 standard_deviation4 = implied_call_volatility_new4()
-print(f"The implied volatility for the Call option is: {standard_deviation4 * 100}%")
+#print(f"The implied volatility for the Call option is: {standard_deviation4 * 100}%")
 
 # Calculo de las griegas
 
@@ -522,80 +522,16 @@ def rho4():
 
         return -(1 / 100) * (strike4 * T * math.exp(-risk_free * T)) * Nmind2 * volumen
 
-print(f"delta {delta4()}")
-print(gamma4())
-print(theta4())
-print(vega4())
-print(rho4())
+##print(f"delta {delta4()}")
+##print(gamma4())
+##print(theta4())
+##print(vega4())
+##print(rho4())
 
 
 
 # p y l
 
-#caso 1
-
-s = (maturity - timestamp) / (365 * 24 * 60 * 60)
-print(f"s {s}") 
-print(f"mat {maturity}")
-Ti = maturity / (365 * 24 * 60 * 60)
-print(f"Ti {Ti}")
-
-def option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend):
-    T = (maturity - timestamp) / (365 * 24 * 60 * 60)  # Convertimos a años
-    dt = standard_deviation * math.sqrt(T)
-    d1 = (math.log(spot / strike) + (risk_free - dividend + (standard_deviation ** 2 / 2)) * T) / dt
-    d2 = d1 - dt
-
-    Nd1 = norm.cdf(d1)
-    Nd2 = norm.cdf(d2)
-    Nmind2 = norm.cdf(-d2)
-    Nmind1 = norm.cdf(-d1)
-
-    if option_type == "c" and style == "European":
-        return (spot * math.exp(-dividend * T) * Nd1) - (strike * math.exp(-risk_free * T) * Nd2)
-    elif option_type == "p" and style == "European":
-        return (strike * math.exp(-risk_free * T) * Nmind2) - (spot * math.exp(-dividend * T) * Nmind1)
-    else:
-        if option_type == "c":
-            Q = 1
-            RF = risk_free
-            Div2 = dividend
-        else:
-            Q = -1
-            RF = dividend
-            Div2 = RF
-            AssetSpot = spot
-            spot = strike
-            strike = AssetSpot
-
-        Volat = standard_deviation * (T) ** 0.5
-        drift = risk_free - dividend
-        Volat2 = standard_deviation ** 2
-
-def payoff(S, X, Premium, Flag, Qty):
-    if Flag == "C":
-        return max(S - X, 0) * Qty - Premium * Qty
-    else:
-        return max(X - S, 0) * Qty - Premium * Qty
-
-def intrinsic(S1, X1, Flag1):
-    if Flag1 == "C":
-        return max(S1 - X1, 0)
-    else:
-        return max(X1 - S1, 0)
-
-def pnl(S2, X2, Flag2, Mat2, Qty2, Style2, Dir2, Call_Put2, PricingDate2, RiskFree2, IV2, Div2, Multiplier, Premium):
-    
-    kk = Qty2
-    print(f"valor {kk}") 
-    
-    
-    if PricingDate2 == Mat2:
-        return intrinsic(S2, X2, Flag2) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
-    else:
-        return abs(option_pricer(Style2, Dir2, Call_Put2, S2, X2, PricingDate2, Mat2, RiskFree2, IV2, Div2)) * Qty2 * Multiplier - Premium * Qty2 * Multiplier
-
-print(option_pricer(style, sell_buy, option_type, spot, strike, timestamp, maturity, risk_free, standard_deviation, dividend))
 
 
 #otro codigo
@@ -623,8 +559,8 @@ def pnl(style, direction, call_put, s, x, pricing_date, maturity, risk_free, vol
     if pricing_date == maturity:
         pnl_value = intrinsic(s, x, call_put) * qty * multiplier - premium * qty * multiplier
         intr = intrinsic(s, x, call_put)
-        print(f"intrinsic : {intr}")
-        print(f"PnL for {call_put} option at maturity: {pnl_value}")
+        #print(f"intrinsic : {intr}")
+        #print(f"PnL for {call_put} option at maturity: {pnl_value}")
         return pnl_value
     else:
         option_price = abs(option_pricer(style, direction, call_put, s, x, pricing_date, maturity, risk_free, volatility, dividend))
@@ -637,7 +573,7 @@ def pnl(style, direction, call_put, s, x, pricing_date, maturity, risk_free, vol
 
 # Option_Pricer
 def option_pricer(style, direction, call_put, spot, strike, pricing_date, maturity, risk_free, standard_deviation, dividend):
-    t = (maturity - pricing_date) / 365
+    t = (maturity - pricing_date).days / 365
     dt = standard_deviation * math.sqrt(t)
     d1 = (np.log(spot / strike) + (risk_free - dividend + (standard_deviation ** 2 / 2)) * t) / dt
     d2 = d1 - dt
@@ -676,86 +612,21 @@ def option_pricer(style, direction, call_put, spot, strike, pricing_date, maturi
 
         return result
 import datetime
-#caso 1
-Style = "European"
-Direction = "Buy"
-Call_Put = "Put"
-Spot = 3730
-Strike = 3830
-PricingDate = datetime.datetime(2023, 3, 10)
-Maturity = datetime.datetime(2023, 3, 10)
-RiskFree = 0.0027
-StandardDeviation = 0.54
-Qty = 1
-Multiplier = 100
-Premium = 1.55
-pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
-print("El PnL es:", pnl_result)
-
-#caso 2
-Style = "European"
-Direction = "Sell"
-Call_Put = "Put"
-Spot = 3805
-Strike = 3810
-PricingDate = datetime.datetime(2023, 3, 10)
-Maturity = datetime.datetime(2023, 3, 10)
-RiskFree = 0.0027
-StandardDeviation = 0.3444
-Dividend = 0.000001
-Qty = 1
-Multiplier = 100
-Premium = 3.80
-pnl_result2 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL2 es:", pnl_result2)
-#caso 3
-
-Style = "European"
-Direction = "Buy"
-Call_Put = "Call"
-Spot = 3907.25
-Strike = 3910
-PricingDate = datetime.datetime(2023, 3, 10)
-Maturity = datetime.datetime(2023, 3, 10)
-RiskFree = 0.0027
-StandardDeviation = 0.4811
-Dividend = 0.000001
-Qty = 1
-Multiplier = 100
-Premium = 0.6
-pnl_result3 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL3 es:", pnl_result3)
-
-#4
-Style = "European"
-Direction = "Buy"
-Call_Put = "Call"
-Spot = 3907.25
-Strike = 3810
-PricingDate = datetime.datetime(2023, 3, 10)
-Maturity = datetime.datetime(2023, 3, 10)
-RiskFree = 0.0027
-StandardDeviation = 0.4811
-Dividend = 0.000001
-Qty = 1
-Multiplier = 100
-Premium = 0.6
-pnl_result4 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL4 es:", pnl_result4)
 
 #prueba
-import datetime
 from datetime import datetime
 
-
+import datetime
 #caso 1
+
+# parte del bucle
 Style = "European"
 Direction = "Buy"
 Call_Put = "Put"
-Spot = 3910
 Strike = 3830
-PricingDate = datetime(2023, 3, 10)
-Maturity = datetime(2023, 3, 10)
+Spot = 3735
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity = datetime.datetime(2023, 3, 10)
 RiskFree = 0.0027
 StandardDeviation = 0.54
 Dividend = 0.00001
@@ -763,70 +634,97 @@ Qty = 1
 Multiplier = 100
 Premium = 1.55
 
-pnl_results = {} # Ahora es un diccionario
+#para ver 1 resultado 
+pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
+print("El PnL es:", pnl_result)
 
-# Calculamos el PnL inicial
-pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL inicial es:", pnl_result)
-pnl_results[0] = pnl_result # Guardamos el resultado inicial
+pnl_results = {}
 
-# Sumamos y restamos 15 a Spot 12 veces
-for i in range(1, 13):
-    Spot += 15
+# Range de valores para Spot
+for i in range(-12, 13): 
+    Spot = Strike + i*15 if i <= 0 else Strike + (i-1)*15
     pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    print(f"El PnL tras sumar 15 a Spot {i} veces es:", pnl_result)
-    pnl_results[i] = pnl_result # Guardamos el resultado
+    pnl_results[Spot] = pnl_result
 
-for i in range(1, 13):
-    Spot -= 15
-    pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    print(f"El PnL tras restar 15 a Spot {i} veces es:", pnl_result)
-    pnl_results[-i] = pnl_result # Guardamos el resultado
-
-# Ahora puedes acceder a cualquier resultado utilizando su clave
-print("El PnL tras sumar 15 a Spot 2 veces es:", pnl_results[10])
-print("El PnL tras restar 15 a Spot 2 veces es:", pnl_results[-2])
+#for spot, pnl_result in pnl_results.items():
+    #print(f'El PnL1 para Spot = {spot} es: {pnl_result}')
 
 
-
-#grafico
-
-import datetime
+#grafico1
 import matplotlib.pyplot as plt
 
-# Caso 1
+# Extraer los valores de spot y pnl de pnl_results
+spots = list(pnl_results.keys())
+pnls = list(pnl_results.values())
+
+# Crear el gráfico
+plt.figure(figsize=(10,6))  # Se puede ajustar el tamaño del gráfico
+plt.plot(spots, pnls, marker='o')  # Usamos 'o' para marcar cada punto
+plt.title('PnL vs Spot')  # Título del gráfico
+plt.xlabel('Spot')  # Etiqueta del eje x
+plt.ylabel('PnL')  # Etiqueta del eje y
+plt.grid(True)  # Muestra una grilla para facilitar la lectura
+#plt.show()  # Muestra el gráfico
+
+#caso 2
+Style = "European"
+Direction = "Sell"
+Call_Put = "Put"
+Spot = 3795
+Strike = 3810
+PricingDate = datetime.datetime(2023, 3, 10)
+Maturity9 = datetime.datetime(2023, 3, 11)
+RiskFree = 0.0027
+StandardDeviation = 0.3444
+Dividend = 0.000001
+Qty = -1
+Multiplier = 100
+Premium = 3.80
+#para ver un resultado
+pnl_result2 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+print("El PnL2 es:", pnl_result2)
+
+pnl_results = {}
+
+# Range de valores para Spot
+for i in range(-12, 13):
+    Spott = strike + i*15
+    pnl_result = pnl(Style, Direction, Call_Put, Spott, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    pnl_results[Spott] = pnl_result
+
+#for spot, pnl_result in pnl_results.items():
+    #print(f'El PnL2 para Spot = {spot} es: {pnl_result}')
+
+
+#caso 3
+
+# parte del bucle
 Style = "European"
 Direction = "Buy"
-Call_Put = "Put"
-Spot = 3910
-Strike = 3830
+#Call_Put = "Call"
+call_put = "C"
+Strike = 3995
+Spot = 3900
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity = datetime.datetime(2023, 3, 10)
 RiskFree = 0.0027
-StandardDeviation = 0.54
+StandardDeviation = 0.4811
+Dividend = 0.00001
 Qty = 1
 Multiplier = 100
-Premium = 1.55
+Premium = 0.6
 
-pnl_results = {}
-for i in range(-6, 7): # 13 iteraciones
-    new_spot = Spot + i*5
-    pnl_result = pnl(Style, Direction, Call_Put, new_spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    pnl_results[new_spot] = pnl_result
+#para ver 1 resultado 
+pnl_result3 = pnl(Style, Direction, call_put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
+print("El PnL3 es:", pnl_result3)
 
-# Ahora creamos las listas para los ejes X e Y de nuestro gráfico
-x_values = list(pnl_results.keys())
-y_values = list(pnl_results.values())
+pnl_results3 = {}
 
-# Creamos el gráfico
-plt.figure(figsize=(10,6))
-plt.plot(x_values, y_values, marker='o') # Usamos 'o' para marcar cada punto de datos
+# Range de valores para Spot
+for i in range(-12, 13): 
+    Spot3 = Spot + i*15 if i <= 0 else Strike + (i-1)*15
+    pnl_result3 = pnl(Style, Direction, Call_Put, Spot3, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    pnl_results3[Spot] = pnl_result3
 
-# Etiquetas para los ejes y el título del gráfico
-plt.xlabel('Valores de Spot')
-plt.ylabel('PnL')
-plt.title('PnL versus cambios en Spot')
-
-# Mostrar el gráfico
-plt.show()
-
+#for spot, pnl_result in pnl_results.items():
+    #print(f'El PnL3 para Spot = {spot} es: {pnl_result3}')
