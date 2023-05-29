@@ -610,6 +610,7 @@ def option_pricer(style, direction, Call_Put, spot, strike, pricing_date, maturi
         return result
 import datetime
 
+
 #prueba
 from datetime import datetime
 
@@ -621,7 +622,7 @@ Style = "European"
 Direction = "Buy"
 Call_Put = "Put"
 Strike = 3830
-Spot = 3735
+Spot1 = 3900
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity = datetime.datetime(2023, 3, 10)
 RiskFree = 0.0027
@@ -632,42 +633,27 @@ Multiplier = 100
 Premium = 1.55
 
 #para ver 1 resultado 
-pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
-print("El PnL es:", pnl_result)
+pnl_result = pnl(Style, Direction, Call_Put, Spot1, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
+#print("El PnL es:", pnl_result)
 
-pnl_results = {}
+lista1 = []
 
 # Range de valores para Spot
 for i in range(-12, 13): 
-    Spot = Strike + i*15 if i <= 0 else Strike + (i-1)*15
+    Spot = Spot1 + i*15 #if i <= 0 else Strike + (i-1)*15
     pnl_result = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    pnl_results[Spot] = pnl_result
-
-#for spot, pnl_result in pnl_results.items():
-    #print(f'El PnL1 para Spot = {spot} es: {pnl_result}')
+    lista1.append(pnl_result)
+    #print(f'Para i={i}, Spot={Spot}, PnL={pnl_result}')
 
 
-#grafico1
-import matplotlib.pyplot as plt
-
-# Extraer los valores de spot y pnl de pnl_results
-spots = list(pnl_results.keys())
-pnls = list(pnl_results.values())
-
-# Crear el gráfico
-plt.figure(figsize=(10,6))  # Se puede ajustar el tamaño del gráfico
-plt.plot(spots, pnls, marker='o')  # Usamos 'o' para marcar cada punto
-plt.title('PnL vs Spot')  # Título del gráfico
-plt.xlabel('Spot')  # Etiqueta del eje x
-plt.ylabel('PnL')  # Etiqueta del eje y
-plt.grid(True)  # Muestra una grilla para facilitar la lectura
-#plt.show()  # Muestra el gráfico
+first_result = lista1[24]
+#print(f'El primer PnL1 es: {first_result}')
 
 #caso 2
 Style = "European"
 Direction = "Sell"
 Call_Put = "Put"
-Spot = 3795
+spot2 = 3900
 Strike = 3810
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity9 = datetime.datetime(2023, 3, 11)
@@ -678,19 +664,21 @@ Qty = -1
 Multiplier = 100
 Premium = 3.80
 #para ver un resultado
-pnl_result2 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL2 es:", pnl_result2)
+pnl_result2 = pnl(Style, Direction, Call_Put, spot2, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+#print("El PnL2 es:", pnl_result2)
 
-pnl_results = {}
+lista2 = []
 
 # Range de valores para Spot
-for i in range(-12, 13):
-    Spott = strike + i*15
-    pnl_result = pnl(Style, Direction, Call_Put, Spott, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    pnl_results[Spott] = pnl_result
+for i in range(-12, 13): 
+    Spot2 = spot2 + i*15 #if i <= 0 else spot2 + (i-1)*15
+    pnl_result22 = pnl(Style, Direction, Call_Put, Spot2, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    lista2.append(pnl_result22)
+    #print(f'Para i={i}, Spot={Spot2}, PnL={pnl_result22}')
 
-#for spot, pnl_result in pnl_results.items():
-    #print(f'El PnL2 para Spot = {spot} es: {pnl_result}')
+
+first_result = lista2[0]
+#print(f'El primer PnL2 es: {first_result}')
 
 
 #caso 3
@@ -701,7 +689,7 @@ Direction = "Buy"
 Call_Put = "Call"
 call_put = "C"
 Strike = 3995
-Spot = 3900
+spot3 = 3900
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity = datetime.datetime(2023, 3, 10)
 RiskFree = 0.0027
@@ -712,34 +700,65 @@ Multiplier = 100
 Premium = 0.6
 
 #para ver 1 resultado 
-pnl_result3 = pnl(Style, Direction, call_put, Spot, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
-print("El PnL3 es:", pnl_result3)
+pnl_result3 = pnl(Style, Direction, call_put, spot3, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
+#print("El PnL3 es:", pnl_result3)
 
-pnl_results3 = {}
+lista3 = []
 
 # Range de valores para Spot
 for i in range(-12, 13): 
-    Spot3 = Spot + i*15 if i <= 0 else Strike + (i-1)*15
-    pnl_result3 = pnl(Style, Direction, Call_Put, Spot3, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-    pnl_results3[Spot] = pnl_result3
+    Spot3 = spot3 + i*15 #if i <= 0 else Strike + (i-1)*15
+    pnl_result33 = pnl(Style, Direction, call_put, Spot3, Strike, PricingDate, Maturity, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    lista3.append(pnl_result33)
+    #print(f'Para i={i}, Spot={Spot3}, PnL={pnl_result33}')
 
-#for spot, pnl_result in pnl_results.items():
-    #print(f'El PnL3 para Spot = {spot} es: {pnl_result3}')
+
+first_result = lista3[24]
+#print(f'El primer PnL3 es: {first_result}')
 
 #caso 4
 Style = "European"
 Direction = "Sell"
-Call_Put = "Call"
-Spot = 3870
+call_put = "Call"
+spot4 = 3900
 Strike = 4015
 PricingDate = datetime.datetime(2023, 3, 10)
 Maturity9 = datetime.datetime(2023, 3, 11)
 RiskFree = 0.0027
 StandardDeviation = 0.2754
-Dividend = 0.000001
+Dividend = 0.0000001
 Qty = -1
 Multiplier = 100
 Premium = 1.15
-#para ver un resultado
-pnl_result4 = pnl(Style, Direction, Call_Put, Spot, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
-print("El PnL4 es:", pnl_result4)
+#para ver 1 resultado 
+pnl_result4 = pnl(Style, Direction, call_put, spot4, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, dividend, Qty, Multiplier, Premium)
+#print("El PnL4 es:", pnl_result4)
+
+lista4 = []
+
+# Range de valores para Spot
+for i in range(-12, 13): 
+    Spot4 = spot4 + i*15 #if i <= 0 else Strike + (i-1)*15
+    pnl_result44 = pnl(Style, Direction, call_put, Spot4, Strike, PricingDate, Maturity9, RiskFree, StandardDeviation, Dividend, Qty, Multiplier, Premium)
+    lista4.append(pnl_result44)
+    #print(f'Para i={i}, Spot={Spot4}, PnL={pnl_result44}')
+
+
+first_result = lista4[24]
+#print(f'El primer PnL4 es: {first_result}')
+
+listaf = [sum(x) for x in zip(lista1, lista2, lista3, lista4)]
+#print(listaf[12])
+
+import matplotlib.pyplot as plt
+
+# Generamos los valores para el eje X
+spots = [spot4 + i*15 for i in range(-12, 13)]
+
+# Ahora listaf representa los valores en el eje Y
+plt.plot(spots, listaf)
+plt.xlabel('Spot')
+plt.ylabel('Suma de PnL')
+plt.title('Gráfico de Spot vs Suma de PnL')
+plt.grid(True)
+plt.show()
